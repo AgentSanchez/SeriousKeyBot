@@ -1,3 +1,4 @@
+
 # SeriousKeyBot
 Discord Bot for giving out private keys to group users.
 
@@ -5,9 +6,13 @@ Discord Bot for giving out private keys to group users.
 # Requirements for running
  - mySQL Database
  - a keys.txt files full of keys, one key per line.
- - a bot in the Discord Dev website.
+ - a bot in the Discord Dev website. [Discord Dev Link](https://discordapp.com/developers/applications/me)
+ - Invite the bot to your Discord server using this link
+	 -  `https://discordapp.com/oauth2/authorize?client_id=CLIENTID&scope=bot`
+	 -  Replace the client_id with your client id from your dev portal [Example](https://i.imgur.com/PGWxbAr.png)
  
- To run just execute the jar with the following arguments
+---
+To run just execute the jar with the following arguments
 
 ```
 java -jar serious-key-bot-1.2-complete.jar "ownerdiscordID" "BotToken" "Bot's Status"
