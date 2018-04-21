@@ -1,5 +1,5 @@
 
-# SeriousKeyBot
+# SeriousKeyBot :computer:
 Discord Bot for giving out private keys to group users.
 
 Latest Build : [Download](https://github.com/AgentSanchez/SeriousKeyBot/blob/master/build/libs/serious-keybot-1.2.jar?raw=true)
