@@ -23,5 +23,7 @@ Upon running the program once it will generate a database.conf in the same folde
 
 This will also generate a log.log file.
 
+When the bot runs out of keys you must stop it provide it a new keys.txt file and start it back up
+
 # Build requirements
  - Import the `build.gradle` file and everything should work out fine. Just do a gradle build and it should generate fine. It will generate a shadowed jar _-complete.jar_ with all dependencies included.
