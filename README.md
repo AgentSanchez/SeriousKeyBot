@@ -3,7 +3,7 @@ Discord Bot for giving out private keys to group users.
 
 
 # Requirements for running
- - mySQL Dataabase
+ - mySQL Database
  - a keys.txt files full of keys, one key per line.
 
 ```
