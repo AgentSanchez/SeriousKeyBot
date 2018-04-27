@@ -1,5 +1,7 @@
 package net.adamsanchez.discord.seriouskeybot;
 
+import net.adamsanchez.discord.seriouskeybot.util.U;
+
 import java.io.*;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
@@ -60,7 +62,7 @@ public class KeyManager {
         }
     }
 
-    public void saveKeys(Scanner fileScanner){
+    public void saveKeys(Scanner fileScanner) {
         try {
             FileWriter fileStream = new FileWriter(keys.toFile());
             BufferedWriter out = new BufferedWriter(fileStream);
@@ -73,8 +75,37 @@ public class KeyManager {
                 out.newLine();
             }
             out.close();
-        } catch(Exception e){
+        } catch (Exception e) {
 
+        }
+    }
+
+    public void returnKey(String key) {
+        synchronized (this) {
+            Scanner localBuffer = null;
+            try {
+                localBuffer = new Scanner(keys);
+                FileWriter fileStream = new FileWriter(keys.toFile());
+                BufferedWriter out = new BufferedWriter(fileStream);
+                //First add the returned key
+                out.write(key);
+                //Add the rest to file
+                while (localBuffer.hasNextLine()) {
+                    String next = localBuffer.nextLine();
+                    if (next.equals("\n"))
+                        out.newLine();
+                    else
+                        out.write(next);
+                    out.newLine();
+                }
+                out.close();
+                U.info("Returned Key: " + key + " to File");
+
+            } catch (NoSuchFileException e) {
+                System.out.println("YOU ARE MISSING THE keys.txt file!! Cannot Return Key: " + key + " to File");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 

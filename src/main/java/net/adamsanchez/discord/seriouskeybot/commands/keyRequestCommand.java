@@ -15,6 +15,7 @@ import net.dv8tion.jda.core.entities.User;
  * Created by Adam Sanchez on 4/11/2018.
  */
 public class keyRequestCommand extends Command {
+    private KeyManager keyManager = Bot.getInstance().getKeyManager();
 
     public keyRequestCommand() {
         this.name = "request";
@@ -27,22 +28,24 @@ public class keyRequestCommand extends Command {
     protected void execute(CommandEvent event) {
         Bot bot = Bot.getInstance();
         User user = event.getAuthor();
-        KeyManager keyManager = bot.getKeyManager();
         TransactionHandler transactionHandler = bot.getTransactionHandler();
         String mention = "<@" + user.getId() + "> ";
         U.info(CC.WHITE_UNDERLINED + user.getName() + " has requested a key.");
         if (!transactionHandler.hasUser(user.getId()) || user.getId().equals(Bot.getInstance().getOwnerID())) {
             if (keyManager.hasKey()) {
                 synchronized (keyManager) {
+                    String lockedKey = keyManager.pop();
                     event.replyInDm("Thanks for joining our community! " +
                                     "By receiving this key you agree not to sell or exchange it. " +
-                                    "Here is your key!`" + keyManager.peek() + "`!",
+                                    "Here is your key!`" + lockedKey + "`!",
                             success -> {
                                 U.info(CC.GREEN + "+ " + CC.RESET + "Giving key - " + keyManager.peek() + " -- to " + user.getName() + " -- " + user.getId());
-                                transactionHandler.postTransaction(user.getId(), keyManager.pop());
+                                transactionHandler.postTransaction(user.getId(), lockedKey);
                                 event.reactSuccess();
                                 event.replySuccess(mention + "I've sent you your private key in a private message!");
                             }, failure -> {
+                                keyManager.returnKey(lockedKey);
+                                U.info(CC.RED + "- " + CC.RESET + "Unable to send message to user --- Key: " + lockedKey + "returning to file.");
                                 event.reactError();
                                 event.replyWarning(mention + "I can't send you a message in DM Please modify your settings :(");
                             });
