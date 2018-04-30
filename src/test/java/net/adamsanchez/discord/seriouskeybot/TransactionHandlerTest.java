@@ -25,43 +25,11 @@ public class TransactionHandlerTest {
     @Test
     public void test(){
 
-        TransactionHandler th = new TransactionHandler();
-        KeyManager keyManager = new KeyManager();
-        for(int ix = 1500; ix > 0 ; ix--){
-            if (keyManager.hasKey()) {
-                Thread t = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            wait(ThreadLocalRandom.current().nextInt(0,200));
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                });
-                t.run();
-
-            }
-        }
-
-
     }
 
     @Test
     public void generateKeys(){
-        Path keyFile = Paths.get("keys.txt");
-        try {
-            FileWriter fileStream = new FileWriter(keyFile.toFile());
-            BufferedWriter out = new BufferedWriter(fileStream);
 
-            for(int x  = 0; x < 1500 ; x++){
-                out.write(UUID.randomUUID().toString());
-                out.newLine();
-            }
-            out.close();
-        } catch (Exception e){
-            System.out.println("Error");
-        }
     }
 
 }
