@@ -144,33 +144,21 @@ public class Database {
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    public Statement statement(){
-        Statement statement = null;
-        try{
-            Connection con = getConnection();
-            statement = con.createStatement();
 
-        } catch (SQLException e) {
-            U.error("Unable to connect --- ", e);
-        }
-        return statement;
-    }
-
-    public PreparedStatement preparedStatement(String string){
+    public PreparedStatement preparedStatement(Connection con , String string){
         PreparedStatement statement = null;
         try{
-            statement = getConnection().prepareStatement(string);
-
+            statement = con.prepareStatement(string);
         } catch (SQLException e) {
             U.error("Error in DB Connection");
         }
         return statement;
     }
 
-    private ResultSet genericQuery(String query){
+    private ResultSet genericQuery(Connection con, String query){
         ResultSet results = null;
         try {
-            results = statement().executeQuery(query);
+            results = con.createStatement().executeQuery(query);
         } catch (SQLException e) {
             U.error("Error running query!");
                     e.printStackTrace();
@@ -179,10 +167,10 @@ public class Database {
     }
 
 
-    public ResultSet genericSelectQuery(String table, String field, String value){
+    public ResultSet genericSelectQuery(Connection con, String table, String field, String value){
         String initial = "SELECT * FROM %s WHERE %s='%s'";
         U.debug("+ Running query \"" + String.format(initial,table,field,value) + "\"" );
-        ResultSet results = genericQuery(String.format(initial,table,field,value));
+        ResultSet results = genericQuery(con, String.format(initial,table,field,value));
         return  results;
     }
 
@@ -193,11 +181,13 @@ public class Database {
     //////////////////////////////////////////////////////////////////////////////////////////
 
     public TransactionRecord getTransaction(String playerID){
-        ResultSet results = genericSelectQuery(userTableName, "playerID", playerID);
         try {
+            Connection con = getConnection();
+            ResultSet results = genericSelectQuery(con, userTableName, "playerID", playerID);
+
             if(results.first()){
                 String steamKey = results.getString("steamKey");
-                results.getStatement().getConnection().close();
+                con.close();
                 return new TransactionRecord(playerID, steamKey);
             }
         } catch (SQLException e) {
@@ -210,11 +200,13 @@ public class Database {
     public void postTransaction(TransactionRecord tr){
         U.info(CC.BLUE_BRIGHT + "Posting Transaction For: " + CC.YELLOW + tr.getPlayerID());
         String initial = "REPLACE INTO %s(playerID, steamKey) VALUES(?,?)";
-        try(PreparedStatement statement = preparedStatement(String.format(initial,userTableName))){
+        try {
+            Connection con = getConnection();
+            PreparedStatement statement = preparedStatement(con, String.format(initial,userTableName));
             statement.setString(1, tr.getPlayerID());
             statement.setString(2, tr.getSteamKey());
             statement.execute();
-            statement.getConnection().close();
+            con.close();
         } catch (SQLException e) {
             U.error(CC.RED + "Error in trying to update player vote record!");
         }
@@ -228,8 +220,9 @@ public class Database {
                 ")", userTableName);
 
         try {
-            statement().executeUpdate(table);
-            statement().getConnection().close();
+            Connection con  = ds.getConnection();
+            con.createStatement().executeUpdate(table);
+            con.close();
         } catch (SQLException e) {
             U.error("Error Creating SQL TABLE-- CHECK YOUR DATA CONFIG", e);
         }
@@ -240,6 +233,7 @@ public class Database {
         try {
             Connection con = ds.getConnection();
             U.info(CC.GREEN + "SQL Connection SUCCESS");
+            con.close();
             return true;
         } catch (SQLException e) {
             U.error(CC.RED + "SQL Connection ERROR");
