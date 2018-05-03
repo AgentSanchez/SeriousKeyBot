@@ -47,10 +47,11 @@ public class Database {
         config.setJdbcUrl(url + timezoneFix);
         config.setUsername(username);
         config.setPassword(password);
-        config.setMaximumPoolSize(20);
-        config.setMinimumIdle(20);
-        config.setConnectionTimeout(10000);
-        config.setMaxLifetime(1770000);
+        config.setMaximumPoolSize(Integer.parseInt(props.getProperty("max-pool-size", "20")));
+        config.setMinimumIdle(Integer.parseInt(props.getProperty("minimum-idle-count", "20")));
+        config.setConnectionTimeout(Long.parseLong(props.getProperty("connection-timeout", "10000")));
+        config.setMaxLifetime(Long.parseLong(props.getProperty("max-life-time", "1770000")));
+        config.setLeakDetectionThreshold(48);
         config.setPoolName("KeyBot-SQL");
 
         //Instantiate Pool
@@ -94,6 +95,12 @@ public class Database {
             props.setProperty("tablePrefix", "KB_");
             props.setProperty("username", "root");
             props.setProperty("password", password);
+
+            props.setProperty("connection-timeout", "10000");
+            props.setProperty("max-pool-size", "20");
+            props.setProperty("minimum-idle-count", "20");
+            props.setProperty("max-life-time", "1770000");
+
 
             props.store(output, null);
 
