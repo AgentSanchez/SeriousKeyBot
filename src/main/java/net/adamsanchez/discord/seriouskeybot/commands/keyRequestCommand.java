@@ -40,8 +40,11 @@ public class keyRequestCommand extends Command {
             if(!activeRequests.contains(user.getId())){
                 activeRequests.add(user.getId());
                 event.reply(mention + "Thanks for your request it is being processed");
+                U.info("began processing for " + user.getName() + ".");
             } else {
                 event.reply(mention + "I'm sorry but your key isn't ready yet, please wait while we process your request.");
+                U.info( user.getName() + " requested a key before processing has terminated");
+                return;
             }
         }
         if (!transactionHandler.hasUser(user.getId()) || user.getId().equals(Bot.getInstance().getOwnerID())) {

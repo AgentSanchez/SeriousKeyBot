@@ -189,13 +189,11 @@ public class Database {
     //////////////////////////////////////////////////////////////////////////////////////////
 
     public TransactionRecord getTransaction(String playerID){
-        try {
-            Connection con = getConnection();
+        try(Connection con = getConnection()){
             ResultSet results = genericSelectQuery(con, userTableName, "playerID", playerID);
 
             if(results.first()){
                 String steamKey = results.getString("steamKey");
-                con.close();
                 return new TransactionRecord(playerID, steamKey);
             }
         } catch (SQLException e) {
@@ -208,13 +206,11 @@ public class Database {
     public void postTransaction(TransactionRecord tr){
         U.info(CC.BLUE_BRIGHT + "Posting Transaction For: " + CC.YELLOW + tr.getPlayerID());
         String initial = "REPLACE INTO %s(playerID, steamKey) VALUES(?,?)";
-        try {
-            Connection con = getConnection();
+        try(Connection con = getConnection()){
             PreparedStatement statement = preparedStatement(con, String.format(initial,userTableName));
             statement.setString(1, tr.getPlayerID());
             statement.setString(2, tr.getSteamKey());
             statement.execute();
-            con.close();
         } catch (SQLException e) {
             U.error(CC.RED + "Error in trying to update player vote record!");
         }
@@ -227,10 +223,8 @@ public class Database {
                 "steamKey		VarChar(36)" +
                 ")", userTableName);
 
-        try {
-            Connection con  = ds.getConnection();
+        try(Connection con = getConnection()){
             con.createStatement().executeUpdate(table);
-            con.close();
         } catch (SQLException e) {
             U.error("Error Creating SQL TABLE-- CHECK YOUR DATA CONFIG", e);
         }
@@ -238,15 +232,15 @@ public class Database {
     }
 
     public boolean testDB(){
-        try {
-            Connection con = ds.getConnection();
+        boolean success = false;
+        try(Connection con = getConnection()) {
             U.info(CC.GREEN + "SQL Connection SUCCESS");
-            con.close();
-            return true;
+            success = true;
         } catch (SQLException e) {
             U.error(CC.RED + "SQL Connection ERROR");
             e.printStackTrace();
+            success = false;
         }
-        return false;
+        return success;
     }
 }
