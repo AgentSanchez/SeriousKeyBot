@@ -51,7 +51,7 @@ public class Database {
         config.setMinimumIdle(Integer.parseInt(props.getProperty("minimum-idle-count", "20")));
         config.setConnectionTimeout(Long.parseLong(props.getProperty("connection-timeout", "10000")));
         config.setMaxLifetime(Long.parseLong(props.getProperty("max-life-time", "1770000")));
-        config.setLeakDetectionThreshold(48);
+        config.setLeakDetectionThreshold(Integer.parseInt(props.getProperty("leak-detection", "2000")));
         config.setPoolName("KeyBot-SQL");
 
         //Instantiate Pool
@@ -100,6 +100,7 @@ public class Database {
             props.setProperty("max-pool-size", "20");
             props.setProperty("minimum-idle-count", "20");
             props.setProperty("max-life-time", "1770000");
+            props.setProperty("leak-detection", "2000");
 
 
             props.store(output, null);
