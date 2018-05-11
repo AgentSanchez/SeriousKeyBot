@@ -56,7 +56,11 @@ public class Bot {
         AnsiConsole.systemUninstall();
 
     }
-
+    public Bot(){
+        logger = LoggerFactory.getLogger(Bot.class);
+        logger.info("\n" + CC.GREEN_BRIGHT +  CC.logo() + CC.RESET);
+        instance = this;
+    }
     public Bot(String ownerID, String token, String status) {
         this(ownerID, token, status, false);
     }

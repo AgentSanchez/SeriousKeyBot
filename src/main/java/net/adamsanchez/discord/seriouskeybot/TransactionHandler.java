@@ -29,7 +29,13 @@ public class TransactionHandler {
             U.info(CC.RED + "- " + CC.RESET + "Player already had a key");
             return true;
         }
+        U.info("Player Not Found");
         return false;
+    }
+
+    public TransactionRecord lookUpTransaction(String playerID){
+        TransactionRecord tr = db.getTransaction(playerID);
+        return tr;
     }
 
     public void postTransaction(String userID, String gameKey){

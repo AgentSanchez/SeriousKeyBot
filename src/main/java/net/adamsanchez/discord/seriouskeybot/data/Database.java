@@ -212,21 +212,24 @@ public class Database {
             statement.setString(2, tr.getSteamKey());
             statement.execute();
         } catch (SQLException e) {
-            U.error(CC.RED + "Error in trying to update player vote record!");
+            U.error(CC.RED + "Error in trying to update player record!", e);
+            e.printStackTrace();
+
         }
     }
 
 
     public void createUserTable(){
         String table = String.format("CREATE TABLE IF NOT EXISTS %s(" +
-                "playerID	    VarChar(36) PRIMARY KEY," +
-                "steamKey		VarChar(36)" +
+                "playerID	    VarChar(64) PRIMARY KEY," +
+                "steamKey		VarChar(64)" +
                 ")", userTableName);
 
         try(Connection con = getConnection()){
             con.createStatement().executeUpdate(table);
         } catch (SQLException e) {
             U.error("Error Creating SQL TABLE-- CHECK YOUR DATA CONFIG", e);
+            e.printStackTrace();
         }
 
     }
