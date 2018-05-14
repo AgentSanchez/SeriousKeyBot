@@ -62,25 +62,27 @@ public class TransactionHandlerTest {
 
                 //Initiate a Request for information
                 System.out.println("Finished Delay for " + fakePlayerName);
-                if (km.hasKey() && !th.hasUser(fakePlayerID)) {
-                    try {
-                        //After Information is received initiate a small random delay to simulate latency
-                        long sleep = ThreadLocalRandom.current().nextLong(500L, 1500L);
-                        Thread.currentThread().sleep(sleep);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+                synchronized(km) {
+                    if (km.hasKey() && !th.hasUser(fakePlayerID)) {
+                        try {
+                            //After Information is received initiate a small random delay to simulate latency
+                            long sleep = ThreadLocalRandom.current().nextLong(500L, 1500L);
+                            Thread.currentThread().sleep(sleep);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
 
-                    System.out.println("Attempting to post transaction for " + fakePlayerName);
-                    //Attempt to post the transaction
-                    th.postTransaction(fakePlayerID, km.pop());
+                        System.out.println("Attempting to post transaction for " + fakePlayerName);
+                        //Attempt to post the transaction
+                        th.postTransaction(fakePlayerID, km.pop());
 
 
-                } else {
-                    if(!km.hasKey()){
-                        U.info("No keys Left For " + fakePlayerName);
                     } else {
-                        U.info("Already key");
+                        if (!km.hasKey()) {
+                            U.info("No keys Left For " + fakePlayerName);
+                        } else {
+                            U.info("Already key");
+                        }
                     }
                 }
                 cdl.countDown();

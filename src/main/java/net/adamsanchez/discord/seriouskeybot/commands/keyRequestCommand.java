@@ -36,42 +36,48 @@ public class keyRequestCommand extends Command {
         TransactionHandler transactionHandler = bot.getTransactionHandler();
         String mention = "<@" + user.getId() + "> ";
         U.info(CC.WHITE_UNDERLINED + user.getName() + " has requested a key.");
-        synchronized (activeRequests){
-            if(!activeRequests.contains(user.getId())){
+        synchronized (activeRequests) {
+            if (!activeRequests.contains(user.getId())) {
                 activeRequests.add(user.getId());
                 event.reply(mention + "Thanks for your request it is being processed");
                 U.info("began processing for " + user.getName() + ".");
             } else {
                 event.reply(mention + "I'm sorry but your key isn't ready yet, please wait while we process your request.");
-                U.info( user.getName() + " requested a key before processing has terminated");
+                U.info(user.getName() + " requested a key before processing has terminated");
                 return;
             }
         }
         if (!transactionHandler.hasUser(user.getId()) || user.getId().equals(Bot.getInstance().getOwnerID())) {
-            if (keyManager.hasKey()) {
-                synchronized (keyManager) {
+            synchronized (keyManager) {
+                if (keyManager.hasKey()) {
+
                     String lockedKey = keyManager.pop();
                     event.replyInDm("Thanks for joining our community! " +
                                     "By receiving this key you agree not to sell or exchange it. " +
                                     "Here is your key!`" + lockedKey + "`!",
                             success -> {
-                                U.info(CC.GREEN + "+ " + CC.RESET + "Giving key - " + keyManager.peek() + " -- to " + user.getName() + " -- " + user.getId());
+                                U.info(CC.GREEN + "+ " + CC.RESET + "Giving key - " + lockedKey + " -- to " + user.getName() + " -- " + user.getId());
                                 transactionHandler.postTransaction(user.getId(), lockedKey);
                                 event.reactSuccess();
                                 event.replySuccess(mention + "I've sent you your private key in a private message!");
-                                synchronized (activeRequests){ activeRequests.remove(user.getId()); }
+                                synchronized (activeRequests) {
+                                    activeRequests.remove(user.getId());
+                                }
                             }, failure -> {
                                 keyManager.returnKey(lockedKey);
                                 U.info(CC.RED + "- " + CC.RESET + "Unable to send message to user --- Key: " + lockedKey + "returning to file.");
                                 event.reactError();
                                 event.replyWarning(mention + "I can't send you a message in DM Please modify your settings :(");
-                                synchronized (activeRequests){ activeRequests.remove(user.getId()); }
+                                synchronized (activeRequests) {
+                                    activeRequests.remove(user.getId());
+                                }
                             });
 
+
+                } else {
+                    event.reply(mention + "I'm sorry, I've run out of keys :( please try again later!");
+                    event.reactError();
                 }
-            } else {
-                event.reply(mention + "I'm sorry, I've run out of keys :( please try again later!");
-                event.reactError();
             }
         } else {
             event.reply(mention + "I'm sorry but I've already given you a key!");
