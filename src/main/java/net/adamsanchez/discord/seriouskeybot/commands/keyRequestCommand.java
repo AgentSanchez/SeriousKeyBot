@@ -64,7 +64,9 @@ public class keyRequestCommand extends Command {
                                     activeRequests.remove(user.getId());
                                 }
                             }, failure -> {
-                                keyManager.returnKey(lockedKey);
+                                synchronized (keyManager) {
+                                    keyManager.returnKey(lockedKey);
+                                }
                                 U.info(CC.RED + "- " + CC.RESET + "Unable to send message to user --- Key: " + lockedKey + "returning to file.");
                                 event.reactError();
                                 event.replyWarning(mention + "I can't send you a message in DM Please modify your settings :(");
