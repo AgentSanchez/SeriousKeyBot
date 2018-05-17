@@ -74,16 +74,23 @@ public class keyRequestCommand extends Command {
                                     activeRequests.remove(user.getId());
                                 }
                             });
+                    return;
 
 
                 } else {
                     event.reply(mention + "I'm sorry, I've run out of keys :( please try again later!");
                     event.reactError();
+                    synchronized (keyManager){
+                        activeRequests.remove(user.getId());
+                    }
                 }
             }
         } else {
             event.reply(mention + "I'm sorry but I've already given you a key!");
             event.reactError();
+            synchronized (keyManager){
+                activeRequests.remove(user.getId());
+            }
         }
 
     }
